@@ -8,7 +8,7 @@ let remote  = (()=>{
         if(auth === 'basic'){
         return `Basic ${btoa(APP_KEY + ":" + APP_SECRET)}`
         }else{
-        return `Kinvey ${sessionStorage.getItem('authtoken')}`
+            return `Kinvey ${sessionStorage.getItem('authtoken')}`
         }
     }
 
@@ -47,6 +47,7 @@ let remote  = (()=>{
     function remove(module, endpoint, auth) {
         return $.ajax(makeRequest('DELETE', module, endpoint, auth));
     }
+
 
     return {
         get,
