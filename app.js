@@ -211,37 +211,6 @@ $(() => {
                     });
                 })
         });
-        // this.get('#/details/:postId',(ctx)=> {
-        //    let postId = ctx.params.postId;
-        //    const postPromise = postService.getPostById(postId);
-        //    const allCommentsPromise = comments.getPostComments(postId);
-        //
-        //    Promise.all([postPromise,allCommentsPromise])
-        //        .then(([post,comments])=>{
-        //            post.date = calcTime(post._kmd.ect);
-        //            post.isAuthor = post._acl.creator === sessionStorage.getItem('userId');
-        //            comments.forEach((c) => {
-        //                c.date = calcTime(c._kmd.ect);
-        //                c.commentAuthor = c._acl.creator === sessionStorage.getItem('userId');
-        //            });
-        //            ctx.isAuth = auth.isAuth();
-        //            ctx.username = sessionStorage.getItem('username');
-        //            ctx.post = post;
-        //            ctx.comments = comments;
-        //
-        //            ctx.loadPartials({
-        //                header: './template/common/header.hbs',
-        //                footer: './templates/common/footer.hbs',
-        //                navigation: './templates/common/navigation.hbs',
-        //                postDetails: './template/details/postDetails.hbs',
-        //                comment: './template/details/comment.hbs'
-        //            }).then(function () {
-        //                this.partial('.template/details/postDetailsPage.hbs');
-        //            })
-        //
-        //        })
-        //        .catch(displayNotification.handleError)
-        // });
         this.get('#/details/:postId', (ctx) => {
             let postId = ctx.params.postId;
 
@@ -274,23 +243,34 @@ $(() => {
                 })
                 .catch(notify.handleError);
         });
+        this.post('#/create/comment', (ctx) => {
 
-        this.get('#/create/comment',(ctx) =>{
-           let author  = sessionStorage.getItem('username');
-           let content = ctx.params.content;
-           let postId = ctx.params.postId;
+            let author = sessionStorage.getItem('username');
+            let content = ctx.params.content;
+            let postId = ctx.params.postId;
 
-           if(content === ''){
-           displayNotification.showError('Cannot add empty comment !');
-           return;
-           }
+            if (content === '') {
+                displayNotification.showError('Cannot add empty comment !');
+                return;
+            }
 
-           comments.createComment(postId,content,author)
-               .then(()=> {
-                   displayNotification.showInfo('Comment created!');
-                   ctx.redirect(`#/details/${postId}`);
+            comments.createComment(postId, content, author)
+                .then(() => {
+                    displayNotification.showInfo('Comment created!');
+                    ctx.redirect(`#/details/${postId}`);
 
-               }).catch(displayNotification.showError)
+                }).catch(displayNotification.showError)
+        });
+        this.get('#/comment/delete/:commentId/post/:postId', (ctx) => {
+            let commentId = ctx.params.commentId;
+            let postId = ctx.params.postId;
+
+            comments.deleteComment(commentId)
+                .then(() => {
+                displayNotification.showInfo('Comment deleted');
+                ctx.redirect(`#/details/${postId}`)
+                }).catch(displayNotification.handleError)
+
         });
 
 
